@@ -47,7 +47,6 @@ def save_model(save_best):
 
 
 def train(args, molecule_model_smiles, device, loader, optimizer):
-    logger.info("Starting model training...")
     molecule_model_smiles.train()
     molecule_model_3D.train()
 
@@ -59,9 +58,8 @@ def train(args, molecule_model_smiles, device, loader, optimizer):
 
     for smiles_batch, graph_batch in tqdm(loader):
         graph_batch = graph_batch.to(device)
-        smiles_batch = smiles_batch.to(device)
 
-        molecule_smiles_repr = molecule_model_smiles(**tokernizer(smiles_batch), return_dict=True).last_hidden_state[:, 0]
+        molecule_smiles_repr = molecule_model_smiles(**tokernizer(smiles_batch).to(device), return_dict=True).last_hidden_state[:, 0]
 
         if args.model_3d == 'schnet':
             molecule_3D_repr = molecule_model_3D(graph_batch.x[:, 0], graph_batch.positions, graph_batch.batch)
@@ -138,6 +136,7 @@ if __name__ == '__main__':
     optimizer = optim.Adam(model_param_group, lr=args.lr, weight_decay=args.decay)
     optimal_loss = 1e10
 
+    logger.info("Starting model training...")
     for epoch in range(1, args.epochs + 1):
         logger.info('epoch: {}'.format(epoch))
         train(args, molecule_model_smiles, device, dataloader, optimizer)
