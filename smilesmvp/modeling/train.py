@@ -8,13 +8,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from config import args
-from smilesmvp.models.vae import VariationalAutoEncoder
-from smilesmvp.models.schnet import SchNet
+from models.vae import VariationalAutoEncoder
+from models.schnet import SchNet
 #from torch_geometric.data import DataLoader
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from smilesmvp.modeling.contrastive_loss import dual_CL
-from smilesmvp.dataset import Molecule3DMaskingDataset, collate_fn
+from modeling.contrastive_loss import dual_CL
+from dataset import Molecule3DMaskingDataset, collate_fn
 from transformers import AutoModel, AutoTokenizer
 
 
