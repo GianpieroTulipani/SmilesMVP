@@ -5,6 +5,7 @@ anyio==4.8.0
 argon2-cffi==23.1.0
 argon2-cffi-bindings==21.2.0
 arrow==1.3.0
+ase==3.24.0
 asttokens==3.0.0
 async-lru==2.0.4
 attrs==24.3.0
@@ -35,6 +36,7 @@ googledrivedownloader==1.1.0
 h11==0.14.0
 httpcore==1.0.7
 httpx==0.28.1
+huggingface-hub==0.27.1
 idna==3.10
 ipykernel==6.29.5
 ipython==8.31.0
@@ -123,17 +125,20 @@ pyzmq==26.2.0
 rdflib==7.1.3
 rdkit==2024.9.4
 referencing==0.36.1
+regex==2024.11.6
 requests==2.32.3
 rfc3339-validator==0.1.4
 rfc3986-validator==0.1.1
 rich==13.9.4
 rpds-py==0.22.3
+safetensors==0.5.2
 scikit-learn==1.6.1
 scipy==1.15.1
 Send2Trash==1.8.3
 setuptools==75.8.0
 shellingham==1.5.4
 six==1.17.0
+-e git+https://github.com/GianpieroTulipani/SmilesMVP.git@eb41dc25e73f508d5ae1c1c57e61131554478107#egg=smilesmvp
 sniffio==1.3.1
 soupsieve==2.6
 stack-data==0.6.3
@@ -141,6 +146,7 @@ sympy==1.13.1
 terminado==0.18.1
 threadpoolctl==3.5.0
 tinycss2==1.4.0
+tokenizers==0.21.0
 torch==2.5.1
 torch_cluster==1.6.3+pt25cu124
 torch_geometric==1.7.2
@@ -150,6 +156,7 @@ torch_spline_conv==1.2.2+pt25cu124
 tornado==6.4.2
 tqdm==4.67.1
 traitlets==5.14.3
+transformers==4.48.0
 triton==3.1.0
 typer==0.15.1
 types-python-dateutil==2.9.0.20241206
