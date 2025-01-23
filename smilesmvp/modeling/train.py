@@ -11,6 +11,7 @@ import torch.optim as optim
 sys.path.append('/kaggle/working/SmilesMVP/smilesmvp')
 sys.path.append('/kaggle/working/SmilesMVP/smilesmvp/modeling')
 sys.path.append('/kaggle/working/SmilesMVP/smilesmvp/models')
+sys.path.append('/kaggle/input/geom-3d/GEOM_3D_nmol50000_nconf5_nupper1000')
 from config import args
 from models.vae import VariationalAutoEncoder
 from models.schnet import SchNet
