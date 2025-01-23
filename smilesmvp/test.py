@@ -1,6 +1,6 @@
 import pandas as pd
 #from smilesmvp.config import PROCESSED_DATA_DIR
-from smilesmvp.dataset import Molecule3DMaskingDataset, collate_fn
+from dataset import Molecule3DMaskingDataset, collate_fn
 from torch.utils.data import DataLoader
 
 root_3d = f'kaggle/input/geom-3d-nmol50000-nconf5-nupper1000'
