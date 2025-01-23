@@ -1,6 +1,6 @@
 from loguru import logger
 
-from smilesmvp.config import args
+from config import args
 
 import numpy as np
 import torch
