@@ -108,11 +108,9 @@ if __name__ == '__main__':
         torch.cuda.manual_seed_all(args.runseed)
         torch.cuda.set_device(args.device)
 
-    if 'GEOM' in args.dataset:
-        data_root = args.input_data_dir / args.dataset
-        dataset = Molecule3DMaskingDataset(data_root, dataset=args.dataset, mask_ratio=args.SSL_masking_ratio, smiles_path=args.input_data_dir / 'processed' / 'smiles.csv') #check this
-    else:
-        raise Exception
+
+    data_root = args.input_data_dir / args.dataset
+    dataset = Molecule3DMaskingDataset(data_root, dataset=args.dataset, mask_ratio=args.SSL_masking_ratio, smiles_path=args.input_data_dir / 'processed' / 'smiles.csv') #check this
     
     dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers, collate_fn=collate_fn)
 
