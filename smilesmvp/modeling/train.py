@@ -1,19 +1,17 @@
 from loguru import logger
 
-from config import args
-
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-from config import args
-from models.vae import VariationalAutoEncoder
-from models.schnet import SchNet
+from ..config import args
+from ..models.vae import VariationalAutoEncoder
+from ..models.schnet import SchNet
 #from torch_geometric.data import DataLoader
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from modeling.contrastive_loss import dual_CL
+from ..modeling.contrastive_loss import dual_CL
 from dataset import Molecule3DMaskingDataset, collate_fn
 from transformers import AutoModel, AutoTokenizer
 
