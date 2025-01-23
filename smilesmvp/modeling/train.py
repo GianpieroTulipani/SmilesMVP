@@ -110,7 +110,7 @@ if __name__ == '__main__':
 
 
     data_root = args.input_data_dir / args.dataset
-    dataset = Molecule3DMaskingDataset(data_root, dataset=args.dataset, mask_ratio=args.SSL_masking_ratio, smiles_path=args.input_data_dir / 'processed' / 'smiles.csv') #check this
+    dataset = Molecule3DMaskingDataset(data_root, dataset=args.dataset, mask_ratio=args.SSL_masking_ratio, smiles_path=args.input_data_dir / args.dataset / 'processed' / 'smiles.csv') #check this
     
     dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers, collate_fn=collate_fn)
 
