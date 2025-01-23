@@ -3,7 +3,7 @@ import pandas as pd
 from dataset import Molecule3DMaskingDataset, collate_fn
 from torch.utils.data import DataLoader
 
-root_3d = f'kaggle/input/geom-3d-nmol50000-nconf5-nupper1000'
+root_3d = f'/kaggle/input/geom-3d-nmol50000-nconf5-nupper1000'
 #root_3d = f"{PROCESSED_DATA_DIR}/GEOM_3D_nmol50000_nconf5_nupper1000"
 csv_path = f"{root_3d}/processed/smiles.csv"
 
