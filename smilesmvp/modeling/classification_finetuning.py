@@ -155,7 +155,7 @@ class ChemBERTaClassifier(nn.Module):
         self.fc = nn.Linear(self.chemberta.config.hidden_size, num_tasks)
     
     def forward(self, smiles_batch):
-        tokens = self.tokenizer(smiles_batch, padding=True, truncation=True, return_tensors='pt').to(self.chemberta.device)
+        tokens = self.tokenizer(smiles_batch, padding=True, truncation=True, return_tensors='pt')
         molecule_repr = self.chemberta(**tokens, return_dict=True).last_hidden_state[:, 0]
         return self.fc(molecule_repr)
 
