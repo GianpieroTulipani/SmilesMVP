@@ -146,12 +146,12 @@ class DeepChemDataset(Dataset):
 
         return smiles, labels
 
-### 🔹 ChemBERTa Classifier
 class ChemBERTaClassifier(nn.Module):
-    def __init__(self, model_path, num_tasks):
+    def __init__(self, model, tokenizer, num_tasks):
         super(ChemBERTaClassifier, self).__init__()
-        self.tokenizer = AutoTokenizer.from_pretrained(model_path)
-        self.chemberta = AutoModel.from_pretrained(model_path)
+        self.tokenizer = tokenizer
+        self.chemberta = model
+        
         self.fc = nn.Linear(self.chemberta.config.hidden_size, num_tasks)
     
     def forward(self, smiles_batch):
@@ -159,7 +159,6 @@ class ChemBERTaClassifier(nn.Module):
         molecule_repr = self.chemberta(**tokens, return_dict=True).last_hidden_state[:, 0]
         return self.fc(molecule_repr)
 
-### 🔹 Training Loop
 def train(model, device, loader, optimizer, criterion):
     model.train()
     total_loss = 0
@@ -218,18 +217,16 @@ if __name__ == '__main__':
     val_loader = DataLoader(valid_dataset, batch_size=args.batch_size, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
 
-    # Initialize model
-    model = ChemBERTaClassifier("DeepChem/ChemBERTa-77M-MLM", len(tasks)).to(device)
+    tokenizer = AutoTokenizer.from_pretrained("DeepChem/ChemBERTa-77M-MLM")
+    chemberta = AutoModel.from_pretrained("DeepChem/ChemBERTa-77M-MLM").load_state_dict(torch.load(join(args.input_model_dir, '_model.pth')))
+    logger.info(f"Loaded pretrained model from {args.input_model_dir}")
+
+    model = ChemBERTaClassifier(chemberta, tokenizer, len(tasks)).to(device)
 
     model_param_group = [{'params': model.chemberta.parameters()},
                          {'params': model.fc.parameters(), 'lr': args.lr * args.lr_scale}]
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.decay)
     criterion = torch.nn.BCEWithLogitsLoss()
-
-    # Load pretrained model if provided
-    if args.input_model_dir:
-        model.load_state_dict(torch.load(join(args.input_model_dir, '_model.pth'), map_location=device))
-        logger.info(f"Loaded pretrained model from {args.input_model_dir}")
 
     best_val_roc = -1
     for epoch in range(1, args.epochs + 1):
