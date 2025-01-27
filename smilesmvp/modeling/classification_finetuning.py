@@ -112,7 +112,7 @@ from loguru import logger
 from tqdm import tqdm
 import sys
 from transformers import AutoModel, AutoTokenizer
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 from os.path import join
 import numpy as np
 import pandas as pd
@@ -126,6 +126,27 @@ sys.path.append('/kaggle/working/SmilesMVP/smilesmvp')
 sys.path.append('/kaggle/working/SmilesMVP/smilesmvp/modeling')
 from config import args
 
+### 🔹 Fix: Wrap DeepChem Dataset for PyTorch Compatibility
+class DeepChemDataset(Dataset):
+    def __init__(self, dc_dataset, transformers):
+        self.X = dc_dataset.X  # SMILES strings
+        self.y = dc_dataset.y.astype(np.float32)  # Ensure labels are float
+        self.transformers = transformers
+
+    def __len__(self):
+        return len(self.X)
+
+    def __getitem__(self, idx):
+        smiles = self.X[idx]  # Get SMILES string
+        labels = torch.tensor(self.y[idx])  # Convert labels to tensor
+
+        # Apply DeepChem transformers
+        for transformer in self.transformers:
+            labels = torch.tensor(transformer.transform(labels.numpy()))
+
+        return smiles, labels
+
+### 🔹 ChemBERTa Classifier
 class ChemBERTaClassifier(nn.Module):
     def __init__(self, model_path, num_tasks):
         super(ChemBERTaClassifier, self).__init__()
@@ -138,7 +159,8 @@ class ChemBERTaClassifier(nn.Module):
         molecule_repr = self.chemberta(**tokens, return_dict=True).last_hidden_state[:, 0]
         return self.fc(molecule_repr)
 
-def train(model, device, loader, optimizer):
+### 🔹 Training Loop
+def train(model, device, loader, optimizer, criterion):
     model.train()
     total_loss = 0
 
@@ -154,6 +176,7 @@ def train(model, device, loader, optimizer):
 
     return total_loss / len(loader)
 
+### 🔹 Evaluation Function
 def eval(model, device, loader):
     model.eval()
     y_true, y_scores = [], []
@@ -173,6 +196,7 @@ def eval(model, device, loader):
     
     return sum(roc_list) / len(roc_list), y_true, y_scores
 
+### 🔹 Main Training Script
 if __name__ == '__main__':
     torch.manual_seed(args.runseed)
     np.random.seed(args.runseed)
@@ -184,42 +208,44 @@ if __name__ == '__main__':
     tasks, datasets, transformers = dc.molnet.load_tox21(featurizer='Raw')
     train_dataset, valid_dataset, test_dataset = datasets
 
+    # Wrap datasets in DeepChemDataset
+    train_dataset = DeepChemDataset(train_dataset, transformers)
+    valid_dataset = DeepChemDataset(valid_dataset, transformers)
+    test_dataset = DeepChemDataset(test_dataset, transformers)
+
+    # Create PyTorch DataLoaders
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
     val_loader = DataLoader(valid_dataset, batch_size=args.batch_size, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
 
+    # Initialize model
     model = ChemBERTaClassifier("DeepChem/ChemBERTa-77M-MLM", len(tasks)).to(device)
 
     model_param_group = [{'params': model.chemberta.parameters()},
-                         {'params': model.fc.parameters(),
-                          'lr': args.lr * args.lr_scale}]
+                         {'params': model.fc.parameters(), 'lr': args.lr * args.lr_scale}]
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.decay)
     criterion = torch.nn.BCEWithLogitsLoss()
 
-    # Load pre-trained model with fix for key mismatch
+    # Load pretrained model if provided
     if args.input_model_dir:
-        try:
-            checkpoint = torch.load(join(args.input_model_dir, '_model.pth'), weights_only=True)
-            new_checkpoint = {f"chemberta.{k}" if "chemberta" not in k else k: v for k, v in checkpoint.items()}
-            model.load_state_dict(new_checkpoint, strict=False)
-            logger.info(f"Loaded pretrained model from {args.input_model_dir}")
-        except Exception as e:
-            logger.error(f"Failed to load model: {e}")
+        model.load_state_dict(torch.load(join(args.input_model_dir, '_model.pth')))
+        logger.info(f"Loaded pretrained model from {args.input_model_dir}")
 
     best_val_roc = -1
     for epoch in range(1, args.epochs + 1):
-        loss_acc = train(model, device, train_loader, optimizer)
-        logger.info(f'Epoch: {epoch}\nLoss: {loss_acc}')
+        loss_acc = train(model, device, train_loader, optimizer, criterion)
+        logger.info(f'Epoch: {epoch} | Loss: {loss_acc}')
 
         val_roc, val_target, val_pred = eval(model, device, val_loader)
         test_roc, test_target, test_pred = eval(model, device, test_loader)
-        logger.info(f'val: {val_roc:.6f}\ttest: {test_roc:.6f}\n')
+        logger.info(f'val: {val_roc:.6f} | test: {test_roc:.6f}')
 
         if val_roc > best_val_roc:
             best_val_roc = val_roc
             if args.output_model_dir:
                 torch.save(model.state_dict(), f"{args.output_model_dir}/model_best.pth")
-                np.savez(f"{args.output_model_dir}/evaluation_best.npz", val_target=val_target, val_pred=val_pred, test_target=test_target, test_pred=test_pred)
+                np.savez(f"{args.output_model_dir}/evaluation_best.npz",
+                         val_target=val_target, val_pred=val_pred, test_target=test_target, test_pred=test_pred)
 
     if args.output_model_dir:
         torch.save(model.state_dict(), f"{args.output_model_dir}/model_final.pth")
