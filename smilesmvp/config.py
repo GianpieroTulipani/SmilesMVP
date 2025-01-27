@@ -23,8 +23,8 @@ parser.add_argument('--dataset', type=str, default='GEOM_3D_nmol50000_nconf5_nup
 parser.add_argument('--num_workers', type=int, default=os.cpu_count())
 
 parser.add_argument('--batch_size', type=int, default=32) #256
-parser.add_argument('--epochs', type=int, default=100)
-parser.add_argument('--lr', type=float, default=0.00001) #0.001
+parser.add_argument('--epochs', type=int, default=50)
+parser.add_argument('--lr', type=float, default=0.0001) #0.001
 parser.add_argument('--decay', type=float, default=0)
 
 parser.add_argument('--emb_dim', type=int, default=384)
