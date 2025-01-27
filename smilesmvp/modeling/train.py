@@ -76,6 +76,7 @@ def train(args, molecule_model_smiles, device, loader, optimizer):
 
     global optimal_loss, patience_counter
     CL_loss_accum /= len(loader)
+    CL_acc_accum /= len(loader)
     AE_loss_accum /= len(loader)
     temp_loss = args.alpha_1 * CL_loss_accum + args.alpha_2 * AE_loss_accum
 
