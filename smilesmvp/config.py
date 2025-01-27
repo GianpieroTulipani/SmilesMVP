@@ -37,6 +37,7 @@ parser.add_argument('--cutoff', type=float, default=10)
 parser.add_argument('--readout', type=str, default='mean', choices=['mean', 'add'])
 parser.add_argument('--schnet_lr_scale', type=float, default=1)
 parser.add_argument('--chemBERTa_lr_scale', type=float, default=1)
+parser.add_argument('--lr_scale', type=float, default=1)
 
 parser.add_argument('--CL_neg_samples', type=int, default=1)
 parser.add_argument('--CL_similarity_metric', type=str, default='InfoNCE_dot_prod',
