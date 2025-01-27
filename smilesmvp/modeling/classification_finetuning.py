@@ -126,11 +126,10 @@ sys.path.append('/kaggle/working/SmilesMVP/smilesmvp')
 sys.path.append('/kaggle/working/SmilesMVP/smilesmvp/modeling')
 from config import args
 
-### 🔹 Fix: Wrap DeepChem Dataset for PyTorch Compatibility
 class DeepChemDataset(Dataset):
     def __init__(self, dc_dataset, transformers):
         self.X = dc_dataset.X  # SMILES strings
-        self.y = dc_dataset.y.astype(np.float32)  # Ensure labels are float
+        self.y = dc_dataset.y.astype(np.float32)
         self.transformers = transformers
 
     def __len__(self):
@@ -138,7 +137,7 @@ class DeepChemDataset(Dataset):
 
     def __getitem__(self, idx):
         smiles = self.X[idx]  # Get SMILES string
-        labels = torch.tensor(self.y[idx])  # Convert labels to tensor
+        labels = torch.tensor(self.y[idx])
 
         # Apply DeepChem transformers
         for transformer in self.transformers:
@@ -175,7 +174,6 @@ def train(model, device, loader, optimizer, criterion):
 
     return total_loss / len(loader)
 
-### 🔹 Evaluation Function
 def eval(model, device, loader):
     model.eval()
     y_true, y_scores = [], []
@@ -195,7 +193,6 @@ def eval(model, device, loader):
     
     return sum(roc_list) / len(roc_list), y_true, y_scores
 
-### 🔹 Main Training Script
 if __name__ == '__main__':
     torch.manual_seed(args.runseed)
     np.random.seed(args.runseed)
@@ -218,7 +215,8 @@ if __name__ == '__main__':
     test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
 
     tokenizer = AutoTokenizer.from_pretrained("DeepChem/ChemBERTa-77M-MLM")
-    chemberta = AutoModel.from_pretrained("DeepChem/ChemBERTa-77M-MLM").load_state_dict(torch.load(join(args.input_model_dir, '_model.pth')))
+    chemberta = AutoModel.from_pretrained("DeepChem/ChemBERTa-77M-MLM")
+    chemberta.load_state_dict(torch.load(join(args.input_model_dir, '_model.pth')))
     logger.info(f"Loaded pretrained model from {args.input_model_dir}")
 
     model = ChemBERTaClassifier(chemberta, tokenizer, len(tasks)).to(device)
