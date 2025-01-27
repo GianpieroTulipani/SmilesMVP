@@ -111,6 +111,7 @@ if __name__ == '__main__':
 from loguru import logger
 from tqdm import tqdm
 import sys
+from rdkit import Chem
 from transformers import AutoModel, AutoTokenizer
 from torch.utils.data import DataLoader, Dataset
 from os.path import join
@@ -128,7 +129,7 @@ from config import args
 
 class DeepChemDataset(Dataset):
     def __init__(self, dc_dataset, transformers):
-        self.X = dc_dataset.X  # SMILES strings
+        self.X = dc_dataset.X  # RDKit Mol objects
         self.y = dc_dataset.y.astype(np.float32)
         self.transformers = transformers
 
@@ -136,12 +137,15 @@ class DeepChemDataset(Dataset):
         return len(self.X)
 
     def __getitem__(self, idx):
-        smiles = self.X[idx]  # Get SMILES string
+        mol = self.X[idx]  # Get RDKit Mol object
+        smiles = Chem.MolToSmiles(mol)  # Convert to SMILES string
         labels = torch.tensor(self.y[idx])
 
         # Apply DeepChem transformers correctly
         if self.transformers:
-            transformed_dataset = self.transformers[0].transform(dc.data.NumpyDataset(X=np.array([]), y=labels.unsqueeze(0).numpy()))
+            transformed_dataset = self.transformers[0].transform(
+                dc.data.NumpyDataset(X=np.array([]), y=labels.unsqueeze(0).numpy())
+            )
             labels = torch.tensor(transformed_dataset.y[0])
 
         return smiles, labels
@@ -203,7 +207,7 @@ if __name__ == '__main__':
         torch.cuda.manual_seed_all(args.runseed)
 
     # Load dataset using DeepChem
-    tasks, datasets, transformers = dc.molnet.load_tox21(featurizer='smiles')
+    tasks, datasets, transformers = dc.molnet.load_tox21(featurizer='Raw')
     train_dataset, valid_dataset, test_dataset = datasets
 
    # Transform dataset before wrapping in DeepChemDataset
