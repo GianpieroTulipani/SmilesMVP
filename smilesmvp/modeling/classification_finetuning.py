@@ -139,9 +139,10 @@ class DeepChemDataset(Dataset):
         smiles = self.X[idx]  # Get SMILES string
         labels = torch.tensor(self.y[idx])
 
-        # Apply DeepChem transformers
-        for transformer in self.transformers:
-            labels = torch.tensor(transformer.transform(labels.numpy()))
+        # Apply DeepChem transformers correctly
+        if self.transformers:
+            transformed_dataset = self.transformers[0].transform(dc.data.NumpyDataset(X=np.array([]), y=labels.unsqueeze(0).numpy()))
+            labels = torch.tensor(transformed_dataset.y[0])
 
         return smiles, labels
 
@@ -164,6 +165,7 @@ def train(model, device, loader, optimizer, criterion):
 
     for smiles_batch, labels in tqdm(loader):
         labels = labels.to(device)
+        logger.info(labels)
         pred = model(smiles_batch)
 
         loss = criterion(pred, labels.float())
@@ -204,10 +206,15 @@ if __name__ == '__main__':
     tasks, datasets, transformers = dc.molnet.load_tox21(featurizer='Raw')
     train_dataset, valid_dataset, test_dataset = datasets
 
-    # Wrap datasets in DeepChemDataset
-    train_dataset = DeepChemDataset(train_dataset, transformers)
-    valid_dataset = DeepChemDataset(valid_dataset, transformers)
-    test_dataset = DeepChemDataset(test_dataset, transformers)
+   # Transform dataset before wrapping in DeepChemDataset
+    train_dataset = transformers[0].transform(train_dataset)
+    valid_dataset = transformers[0].transform(valid_dataset)
+    test_dataset = transformers[0].transform(test_dataset)
+
+    # Then create DeepChemDataset instances
+    train_dataset = DeepChemDataset(train_dataset, [])
+    valid_dataset = DeepChemDataset(valid_dataset, [])
+    test_dataset = DeepChemDataset(test_dataset, [])
 
     # Create PyTorch DataLoaders
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
