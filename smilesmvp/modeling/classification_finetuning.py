@@ -228,7 +228,7 @@ if __name__ == '__main__':
 
     # Load pretrained model if provided
     if args.input_model_dir:
-        model.load_state_dict(torch.load(join(args.input_model_dir, '_model.pth')))
+        model.load_state_dict(torch.load(join(args.input_model_dir, '_model.pth'), map_location=device))
         logger.info(f"Loaded pretrained model from {args.input_model_dir}")
 
     best_val_roc = -1
