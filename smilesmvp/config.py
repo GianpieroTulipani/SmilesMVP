@@ -22,9 +22,9 @@ parser.add_argument('--input_data_dir', type=str, default=Path('/kaggle/input/ge
 parser.add_argument('--dataset', type=str, default='GEOM_3D_nmol50000_nconf5_nupper1000_morefeat')
 parser.add_argument('--num_workers', type=int, default=os.cpu_count())
 
-parser.add_argument('--batch_size', type=int, default=16)
+parser.add_argument('--batch_size', type=int, default=32)
 parser.add_argument('--epochs', type=int, default=50)
-parser.add_argument('--lr', type=float, default=0.001)
+parser.add_argument('--lr', type=float, default=0.0001)
 parser.add_argument('--decay', type=float, default=0)
 
 parser.add_argument('--emb_dim', type=int, default=384)
