@@ -58,7 +58,7 @@ parser.add_argument('--dropout_ratio', type=float, default=0.5)
 parser.add_argument('--alpha_1', type=float, default=1)
 parser.add_argument('--alpha_2', type=float, default=1) #0.1
 
-parser.add_argument('--input_model_dir', type=str, default=Path('/kaggle/working')) #/kaggle/input/classification-pretrain
+parser.add_argument('--input_model_dir', type=str, default=Path('/kaggle/input/classification-pretrained'))
 parser.add_argument('--output_model_dir', type=str, default=Path('/kaggle/working'))
 
 args = parser.parse_args()
