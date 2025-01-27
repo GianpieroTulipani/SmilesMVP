@@ -121,7 +121,9 @@ if __name__ == '__main__':
     logger.info(f"Loaded pretrained model from {args.input_model_dir}")
 
     model = ChemBERTaClassifier(chemberta, tokenizer, len(tasks), device).to(device)
-
+    model_param_group = [{'params': model.chemberta.parameters()},
+                         {'params': model.fc.parameters(),
+                          'lr': args.lr * args.lr_scale}]
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.decay)
     criterion = torch.nn.BCEWithLogitsLoss()
 
