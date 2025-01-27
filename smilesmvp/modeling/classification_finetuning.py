@@ -44,7 +44,7 @@ class ChemBERTaClassifier(nn.Module):
         super(ChemBERTaClassifier, self).__init__()
         self.tokenizer = tokenizer
         self.chemberta = model
-        self.device = device  # Store device
+        self.device = device
         self.fc = nn.Linear(self.chemberta.config.hidden_size, num_tasks)
     
     def forward(self, smiles_batch):
@@ -57,10 +57,9 @@ def train(model, device, loader, optimizer, criterion):
     total_loss = 0
 
     for smiles_batch, labels in tqdm(loader):
-        smiles_batch = smiles_batch.to(device)
         labels = labels.to(device)
 
-        pred = model(smiles_batch)  # Tokenization and model execution on same device
+        pred = model(smiles_batch)
         loss = criterion(pred, labels.float())
 
         optimizer.zero_grad()
@@ -75,7 +74,6 @@ def eval(model, device, loader):
     y_true, y_scores = [], []
 
     for smiles_batch, labels in loader:
-        smiles_batch = smiles_batch.to(device)
         labels = labels.to(device)
         
         with torch.no_grad():
