@@ -57,8 +57,8 @@ def train(model, device, loader, optimizer, criterion):
     total_loss = 0
 
     for smiles_batch, labels in tqdm(loader):
-        #smiles_batch = [s for s in smiles_batch]  # Ensure smiles_batch is a list
-        labels = labels.to(device)  # Move labels to correct device
+        smiles_batch = smiles_batch.to(device)
+        labels = labels.to(device)
 
         pred = model(smiles_batch)  # Tokenization and model execution on same device
         loss = criterion(pred, labels.float())
@@ -75,8 +75,8 @@ def eval(model, device, loader):
     y_true, y_scores = [], []
 
     for smiles_batch, labels in loader:
-        #smiles_batch = [s for s in smiles_batch]  # Ensure smiles_batch is a list
-        labels = labels.to(device)  # Move labels to the correct device
+        smiles_batch = smiles_batch.to(device)
+        labels = labels.to(device)
         
         with torch.no_grad():
             pred = model(smiles_batch)
