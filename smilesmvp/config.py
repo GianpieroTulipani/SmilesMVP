@@ -24,7 +24,7 @@ parser.add_argument('--num_workers', type=int, default=os.cpu_count())
 
 parser.add_argument('--batch_size', type=int, default=32)
 parser.add_argument('--epochs', type=int, default=50)
-parser.add_argument('--lr', type=float, default=0.0001)
+parser.add_argument('--lr', type=float, default=0.00001)
 parser.add_argument('--decay', type=float, default=0)
 
 parser.add_argument('--emb_dim', type=int, default=384)
