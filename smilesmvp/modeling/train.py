@@ -1,4 +1,5 @@
 from loguru import logger
+import logging
 import os
 import sys
 import numpy as np
@@ -8,6 +9,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from tqdm import tqdm
 from codecarbon import EmissionsTracker
+logging.getLogger("codecarbon").disabled = True
 from transformers import AutoModel, AutoTokenizer
 
 sys.path.append('/kaggle/working/SmilesMVP/smilesmvp')
@@ -128,7 +130,7 @@ if __name__ == '__main__':
     max_patience = 10
     
     logger.info("Starting model training...")
-    tracker = EmissionsTracker()
+    tracker = EmissionsTracker(log_)
     total_emissions = 0.0
 
     for epoch in range(1, args.epochs + 1):
