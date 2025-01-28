@@ -23,7 +23,7 @@ parser.add_argument('--dataset', type=str, default='GEOM_3D_nmol50000_nconf5_nup
 parser.add_argument('--num_workers', type=int, default=os.cpu_count())
 
 parser.add_argument('--batch_size', type=int, default=256) #256
-parser.add_argument('--epochs', type=int, default=1)
+parser.add_argument('--epochs', type=int, default=50)
 parser.add_argument('--lr', type=float, default=0.0001) #0.001
 parser.add_argument('--decay', type=float, default=0)
 
@@ -39,7 +39,7 @@ parser.add_argument('--schnet_lr_scale', type=float, default=1)
 parser.add_argument('--chemBERTa_lr_scale', type=float, default=1)
 parser.add_argument('--lr_scale', type=float, default=1)#0.1
 parser.add_argument('--CL_neg_samples', type=int, default=1)
-parser.add_argument('--CL_similarity_metric', type=str, default='InfoNCE_dot_prod',
+parser.add_argument('--CL_similarity_metric', type=str, default='EBM_dot_prod',
                     choices=['InfoNCE_dot_prod', 'EBM_dot_prod'])
 
 parser.add_argument('--T', type=float, default=0.1)

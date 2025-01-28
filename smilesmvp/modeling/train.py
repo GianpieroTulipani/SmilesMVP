@@ -129,12 +129,21 @@ if __name__ == '__main__':
     
     logger.info("Starting model training...")
     tracker = EmissionsTracker()
+    total_emissions = 0.0
+
     for epoch in range(1, args.epochs + 1):
         logger.info(f'Epoch: {epoch}')
+
+        tracker.start()
         patience_counter = train(args, molecule_model_smiles, device, dataloader, optimizer)
+        epoch_emissions = tracker.stop()
+
+        total_emissions += epoch_emissions
+        logger.info(f"Epoch {epoch} emissions: {epoch_emissions:.4f} kg CO2")
+
         if patience_counter >= max_patience:
             logger.info("Early stopping triggered!")
             break
-    emissions: float = tracker.stop()
-    logger.info(f"Total CO2 emissions: {emissions} kg")
+
+    logger.info(f"Total kg of CO2 emissions: {total_emissions:.4f}")
     save_model(save_best=False)
