@@ -130,7 +130,7 @@ if __name__ == '__main__':
     max_patience = 10
     
     logger.info("Starting model training...")
-    tracker = EmissionsTracker(log_)
+    tracker = EmissionsTracker()
     total_emissions = 0.0
 
     for epoch in range(1, args.epochs + 1):
