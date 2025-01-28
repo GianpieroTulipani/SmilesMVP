@@ -97,7 +97,7 @@ if __name__ == '__main__':
         torch.cuda.manual_seed_all(args.runseed)
 
     # Load dataset using DeepChem
-    tasks, datasets, transformers = dc.molnet.load_tox21(featurizer='Raw')
+    tasks, datasets, transformers = dc.molnet.load_lipo(featurizer='Raw')
     train_dataset, valid_dataset, test_dataset = datasets
 
     # Transform dataset before wrapping in DeepChemDataset
