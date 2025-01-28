@@ -7,6 +7,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from tqdm import tqdm
+from codecarbon import EmissionsTracker
 from transformers import AutoModel, AutoTokenizer
 
 sys.path.append('/kaggle/working/SmilesMVP/smilesmvp')
@@ -127,11 +128,13 @@ if __name__ == '__main__':
     max_patience = 10
     
     logger.info("Starting model training...")
+    tracker = EmissionsTracker()
     for epoch in range(1, args.epochs + 1):
         logger.info(f'Epoch: {epoch}')
         patience_counter = train(args, molecule_model_smiles, device, dataloader, optimizer)
         if patience_counter >= max_patience:
             logger.info("Early stopping triggered!")
             break
-    
+    emissions: float = tracker.stop()
+    logger.info(f"Total CO2 emissions: {emissions} kg")
     save_model(save_best=False)
