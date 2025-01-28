@@ -117,7 +117,7 @@ if __name__ == '__main__':
 
     tokenizer = AutoTokenizer.from_pretrained("DeepChem/ChemBERTa-77M-MLM")
     chemberta = AutoModel.from_pretrained("DeepChem/ChemBERTa-77M-MLM")
-    chemberta.load_state_dict(torch.load(join(args.input_model_dir, '_model.pth'), map_location=device))
+    chemberta.load_state_dict(torch.load(join(args.input_model_dir, '_model(1).pth'), map_location=device))
     logger.info(f"Loaded pretrained model from {args.input_model_dir}")
 
     model = ChemBERTaClassifier(chemberta, tokenizer, len(tasks), device).to(device)
