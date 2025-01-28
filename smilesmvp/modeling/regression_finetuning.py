@@ -10,7 +10,7 @@ import pandas as pd
 import deepchem as dc
 import torch
 from torch import nn
-from sklearn.metrics import root_mean_squared_error
+from sklearn.metrics import mean_squared_error
 
 sys.path.append('/kaggle/working/SmilesMVP/smilesmvp')
 sys.path.append('/kaggle/working/SmilesMVP/smilesmvp/modeling')
@@ -85,7 +85,7 @@ def eval(model, device, loader):
     y_true = torch.cat(y_true, dim=0).numpy()
     y_pred = torch.cat(y_pred, dim=0).numpy()
 
-    rmse_list = [root_mean_squared_error(y_true[:, i], y_pred[:, i], squared=False) for i in range(y_true.shape[1])]
+    rmse_list = [mean_squared_error(y_true[:, i], y_pred[:, i], squared=False) for i in range(y_true.shape[1])]
 
     return sum(rmse_list) / len(rmse_list), y_true, y_pred
 
