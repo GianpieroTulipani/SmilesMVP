@@ -17,25 +17,24 @@ sys.path.append('/kaggle/working/SmilesMVP/smilesmvp/modeling')
 from config import args
 
 class DeepChemDataset(Dataset):
-    def __init__(self, dc_dataset, transformers):
-        self.X = dc_dataset.X  # RDKit Mol objects
+    def __init__(self, dc_dataset):
+        self.X = dc_dataset.X 
         self.y = dc_dataset.y.astype(np.float32)
-        self.transformers = transformers
+        #self.transformers = transformers
 
     def __len__(self):
         return len(self.X)
 
     def __getitem__(self, idx):
-        mol = self.X[idx]  # Get RDKit Mol object
-        smiles = Chem.MolToSmiles(mol)  # Convert to SMILES string
+        mol = self.X[idx] 
+        smiles = Chem.MolToSmiles(mol) 
         labels = torch.tensor(self.y[idx])
 
-        # Apply DeepChem transformers correctly
-        if self.transformers:
+        """if self.transformers:
             transformed_dataset = self.transformers[0].transform(
                 dc.data.NumpyDataset(X=np.array([]), y=labels.unsqueeze(0).numpy())
             )
-            labels = torch.tensor(transformed_dataset.y[0])
+            labels = torch.tensor(transformed_dataset.y[0])"""
 
         return smiles, labels
 
@@ -106,9 +105,9 @@ if __name__ == '__main__':
     test_dataset = transformers[0].transform(test_dataset)
 
     # Create DeepChemDataset instances
-    train_dataset = DeepChemDataset(train_dataset, [])
-    valid_dataset = DeepChemDataset(valid_dataset, [])
-    test_dataset = DeepChemDataset(test_dataset, [])
+    train_dataset = DeepChemDataset(train_dataset)
+    valid_dataset = DeepChemDataset(valid_dataset)
+    test_dataset = DeepChemDataset(test_dataset)
 
     # Create PyTorch DataLoaders
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
