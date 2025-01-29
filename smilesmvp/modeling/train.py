@@ -8,7 +8,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from tqdm import tqdm
-from codecarbon import EmissionsTracker
+#from codecarbon import EmissionsTracker
 #logging.getLogger("codecarbon").disabled = True
 from transformers import AutoModel, AutoTokenizer
 
