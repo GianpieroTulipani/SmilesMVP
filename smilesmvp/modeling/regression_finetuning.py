@@ -71,15 +71,15 @@ def eval(model, device, loader):
         with torch.no_grad():
             pred = model(smiles_batch)
 
-        y_true.append(labels.cpu())
-        y_pred.append(pred.cpu())
+        y_true.append(labels)
+        y_pred.append(pred)
 
-    y_true = torch.cat(y_true, dim=0).numpy()
-    y_pred = torch.cat(y_pred, dim=0).numpy()
+    y_true = torch.cat(y_true, dim=0).cpu().numpy()
+    y_pred = torch.cat(y_pred, dim=0).cpu().numpy()
 
-    rmse_list = [mean_squared_error(y_true[:, i], y_pred[:, i], squared=False) for i in range(y_true.shape[1])]
-
-    return sum(rmse_list) / len(rmse_list), y_true, y_pred
+    #rmse_list = [mean_squared_error(y_true[:, i], y_pred[:, i], squared=False) for i in range(y_true.shape[1])]
+    rmse = mean_squared_error(y_true, y_pred, squared=False)
+    return rmse , y_true, y_pred #sum(rmse_list) / len(rmse_list), y_true, y_pred
 
 if __name__ == '__main__':
     torch.manual_seed(args.runseed)
@@ -109,7 +109,7 @@ if __name__ == '__main__':
 
     tokenizer = AutoTokenizer.from_pretrained("DeepChem/ChemBERTa-77M-MLM")
     chemberta = AutoModel.from_pretrained("DeepChem/ChemBERTa-77M-MLM")
-    chemberta.load_state_dict(torch.load(join(args.input_model_dir, '_model (1).pth'), map_location=device))
+    chemberta.load_state_dict(torch.load(join(args.input_model_dir, '_model_final.pth'), map_location=device))
     logger.info(f"Loaded pretrained model from {args.input_model_dir}")
 
     model = ChemBERTaClassifier(chemberta, tokenizer, len(tasks), device).to(device)
