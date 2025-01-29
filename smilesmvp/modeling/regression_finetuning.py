@@ -20,8 +20,7 @@ class DeepChemDataset(Dataset):
     def __init__(self, dc_dataset):
         self.X = dc_dataset.X 
         self.y = dc_dataset.y.astype(np.float32)
-        #self.transformers = transformers
-
+        
     def __len__(self):
         return len(self.X)
 
@@ -29,12 +28,6 @@ class DeepChemDataset(Dataset):
         mol = self.X[idx] 
         smiles = Chem.MolToSmiles(mol) 
         labels = torch.tensor(self.y[idx])
-
-        """if self.transformers:
-            transformed_dataset = self.transformers[0].transform(
-                dc.data.NumpyDataset(X=np.array([]), y=labels.unsqueeze(0).numpy())
-            )
-            labels = torch.tensor(transformed_dataset.y[0])"""
 
         return smiles, labels
 

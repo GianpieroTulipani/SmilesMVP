@@ -18,11 +18,11 @@ parser.add_argument('--seed', type=int, default=42)
 parser.add_argument('--runseed', type=int, default=0)
 parser.add_argument('--device', type=int, default=0)
 
-parser.add_argument('--input_data_dir', type=str, default=Path('/kaggle/input/geom-3d-regression'))#geom-3d-regression
-parser.add_argument('--dataset', type=str, default='GEOM_3D_nmol50000_nconf5_nupper1000_morefeat')#GEOM_3D_nmol50000_nconf5_nupper1000_morefeat
+parser.add_argument('--input_data_dir', type=str, default=Path('/kaggle/input/geom-3d'))#geom-3d-regression
+parser.add_argument('--dataset', type=str, default='GEOM_3D_nmol50000_nconf5_nupper1000')#GEOM_3D_nmol50000_nconf5_nupper1000_morefeat
 parser.add_argument('--num_workers', type=int, default=os.cpu_count())
 
-parser.add_argument('--batch_size', type=int, default=16) #256
+parser.add_argument('--batch_size', type=int, default=256) #32 for classification, 16 for regression
 parser.add_argument('--epochs', type=int, default=50)
 parser.add_argument('--lr', type=float, default=0.0001) #0.001
 parser.add_argument('--decay', type=float, default=0)
@@ -58,7 +58,7 @@ parser.add_argument('--dropout_ratio', type=float, default=0.5)
 parser.add_argument('--alpha_1', type=float, default=1)
 parser.add_argument('--alpha_2', type=float, default=1) #0.1
 
-parser.add_argument('--input_model_dir', type=str, default=Path('/kaggle/input/regression-pretrained'))
+parser.add_argument('--input_model_dir', type=str, default=Path('/kaggle/input/classification-pretrained'))
 parser.add_argument('--output_model_dir', type=str, default=Path('/kaggle/working'))
 
 args = parser.parse_args()
