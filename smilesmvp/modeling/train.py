@@ -147,5 +147,4 @@ if __name__ == '__main__':
             logger.info("Early stopping triggered!")
             break
 
-    #logger.info(f"Total kg of CO2 emissions: {total_emissions:.4f}")
     save_model(save_best=False)
