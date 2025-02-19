@@ -18,7 +18,7 @@ parser.add_argument('--seed', type=int, default=42)
 parser.add_argument('--runseed', type=int, default=0)
 parser.add_argument('--device', type=int, default=0)
 
-parser.add_argument('--input_data_dir', type=str, default=Path('/kaggle/input/geom-3d-regression'))#geom-3d-regression
+parser.add_argument('--input_data_dir', type=str, default=Path('/kaggle/input/geom-3d'))#geom-3d-regression
 parser.add_argument('--dataset', type=str, default='GEOM_3D_nmol50000_nconf5_nupper1000')#GEOM_3D_nmol50000_nconf5_nupper1000_morefeat
 parser.add_argument('--num_workers', type=int, default=os.cpu_count())
 
